@@ -1,7 +1,7 @@
 import React from 'react'
 import { Formik, Form, Field } from 'formik'
 import * as Yup from 'yup'
-import { Button, Card, CardBody, FormControl, FormErrorMessage, FormLabel, Heading, Input, Stack } from '@chakra-ui/react'
+import { Button, Card, CardBody, CardHeader, FormControl, FormErrorMessage, FormLabel, Heading, Input, Stack, Text } from '@chakra-ui/react'
 import { registerUser, setAuthHeaders } from '../api'
 import { AuthContext } from './App'
 
@@ -14,9 +14,15 @@ const RegisterSchema = Yup.object({
 export default function Register() {
   const { login } = React.useContext(AuthContext)
   return (
-    <Stack spacing={6} align="center">
-      <Heading>Register</Heading>
-      <Card w="sm">
+    <Stack spacing={6} align="center" minH="70vh" justify="center">
+      <Stack spacing={1} textAlign="center">
+        <Heading size="lg">Create your account</Heading>
+        <Text color="gray.600" _dark={{ color: 'gray.300' }}>Start tracking your tech issues in minutes</Text>
+      </Stack>
+      <Card w={{ base: '100%', sm: 'sm' }} shadow="lg">
+        <CardHeader pb={0}>
+          <Heading size="md">Register</Heading>
+        </CardHeader>
         <CardBody>
           <Formik
             initialValues={{ name: '', email: '', password: '' }}

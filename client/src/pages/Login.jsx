@@ -1,7 +1,7 @@
 import React from 'react'
 import { Formik, Form, Field } from 'formik'
 import * as Yup from 'yup'
-import { Box, Button, Card, CardBody, FormControl, FormErrorMessage, FormLabel, Heading, Input, Stack, Text } from '@chakra-ui/react'
+import { Box, Button, Card, CardBody, FormControl, FormErrorMessage, FormLabel, Heading, Input, Stack, Text, CardHeader } from '@chakra-ui/react'
 import { login, setAuthHeaders } from '../api'
 import { AuthContext } from './App'
 
@@ -18,9 +18,15 @@ export default function Login() {
   }, [user])
 
   return (
-    <Stack spacing={6} align="center">
-      <Heading>Login</Heading>
-      <Card w="sm">
+    <Stack spacing={6} align="center" minH="70vh" justify="center">
+      <Stack spacing={1} textAlign="center">
+        <Heading size="lg">Welcome back</Heading>
+        <Text color="gray.600" _dark={{ color: 'gray.300' }}>Sign in to continue to Tech Ticketing</Text>
+      </Stack>
+      <Card w={{ base: '100%', sm: 'sm' }} shadow="lg">
+        <CardHeader pb={0}>
+          <Heading size="md">Login</Heading>
+        </CardHeader>
         <CardBody>
           <Formik
             initialValues={{ email: 'employee1@example.com', password: 'password123' }}
@@ -58,7 +64,9 @@ export default function Login() {
           </Formik>
         </CardBody>
       </Card>
-      <Box color="gray.600" fontSize="sm">Try seeded accounts: employee1@example.com, admin@example.com, resolver1@example.com (password: password123)</Box>
+      <Box color="gray.600" _dark={{ color: 'gray.300' }} fontSize="sm" textAlign="center">
+        Try seeded accounts: employee1@example.com, admin@example.com, resolver1@example.com (password: password123)
+      </Box>
     </Stack>
   )
 }

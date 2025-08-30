@@ -1,7 +1,7 @@
 import React from 'react'
 import { Formik, Form, Field } from 'formik'
 import * as Yup from 'yup'
-import { Button, Card, CardBody, FormControl, FormErrorMessage, FormLabel, Heading, Input, Stack, Textarea } from '@chakra-ui/react'
+import { Button, Card, CardBody, CardHeader, FormControl, FormErrorMessage, FormLabel, Heading, Input, Stack, Textarea, Text } from '@chakra-ui/react'
 import { createTicket } from '../api'
 import { AuthContext } from './App'
 import { useNavigate } from 'react-router-dom'
@@ -18,8 +18,14 @@ export default function NewTicket() {
 
   return (
     <Stack>
-      <Heading size="md">Create Ticket</Heading>
-      <Card>
+      <Stack spacing={1} mb={2}>
+        <Heading size="lg">Create Ticket</Heading>
+        <Text color="gray.600" _dark={{ color: 'gray.300' }}>Provide a clear title and detailed description to help resolvers act quickly.</Text>
+      </Stack>
+      <Card shadow="lg">
+        <CardHeader pb={0}>
+          <Heading size="md">Ticket details</Heading>
+        </CardHeader>
         <CardBody>
           <Formik
             initialValues={{ title: '', description: '' }}

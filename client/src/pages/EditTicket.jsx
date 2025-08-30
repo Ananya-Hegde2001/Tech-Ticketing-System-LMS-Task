@@ -2,8 +2,9 @@ import React from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { Formik, Form, Field } from 'formik'
 import * as Yup from 'yup'
-import { Box, Button, Card, CardBody, FormControl, FormErrorMessage, FormLabel, Heading, Input, Select, Stack, Textarea } from '@chakra-ui/react'
+import { Box, Button, Card, CardBody, CardHeader, FormControl, FormErrorMessage, FormLabel, Heading, Input, Select, Stack, Textarea, SimpleGrid, Text } from '@chakra-ui/react'
 import { fetchTickets, listResolvers, updateTicket } from '../api'
+import { AuthContext } from './App'
 
 const AdminEditSchema = Yup.object({
   title: Yup.string().min(3).max(120).required('Required'),
@@ -17,8 +18,16 @@ const AdminEditSchema = Yup.object({
 export default function EditTicket() {
   const { id } = useParams()
   const navigate = useNavigate()
+  const { user } = React.useContext(AuthContext)
   const [ticket, setTicket] = React.useState(null)
   const [resolvers, setResolvers] = React.useState([])
+
+  // Client-side guard: only admins can access this page
+  React.useEffect(() => {
+    if (user && user.role !== 'ADMIN') {
+      navigate('/tickets')
+    }
+  }, [user, navigate])
 
   React.useEffect(() => {
     fetchTickets().then(list => setTicket(list.find(t => String(t.id) === id)))
@@ -29,8 +38,11 @@ export default function EditTicket() {
 
   return (
     <Stack>
-      <Heading size="md">Edit Ticket</Heading>
-      <Card>
+      <Heading size="lg" mb={2}>Edit Ticket</Heading>
+      <Card shadow="lg">
+        <CardHeader pb={0}>
+          <Heading size="md">Details & Assignment</Heading>
+        </CardHeader>
         <CardBody>
           <Formik
             enableReinitialize
@@ -68,41 +80,43 @@ export default function EditTicket() {
                     <Field as={Textarea} name="description" rows={5} />
                     <FormErrorMessage>{errors.description}</FormErrorMessage>
                   </FormControl>
-                  <FormControl>
-                    <FormLabel>Assign to</FormLabel>
-                    <Field as={Select} name="assigned_to">
-                      <option value="">Unassigned</option>
-                      {resolvers.map(r => (
-                        <option key={r.id} value={r.id}>{r.name} ({r.email})</option>
-                      ))}
-                    </Field>
-                  </FormControl>
-                  <FormControl isInvalid={touched.priority && errors.priority}>
-                    <FormLabel>Priority</FormLabel>
-                    <Field as={Select} name="priority">
-                      <option value="LOW">LOW</option>
-                      <option value="MEDIUM">MEDIUM</option>
-                      <option value="HIGH">HIGH</option>
-                      <option value="CRITICAL">CRITICAL</option>
-                    </Field>
-                    <FormErrorMessage>{errors.priority}</FormErrorMessage>
-                  </FormControl>
-                  <FormControl>
-                    <FormLabel>Deadline</FormLabel>
-                    <Field as={Input} type="date" name="deadline" />
-                  </FormControl>
-                  <FormControl isInvalid={touched.status && errors.status}>
-                    <FormLabel>Status</FormLabel>
-                    <Field as={Select} name="status">
-                      <option value="OPEN">OPEN</option>
-                      <option value="IN_PROGRESS">IN_PROGRESS</option>
-                      <option value="RESOLVED">RESOLVED</option>
-                      <option value="CLOSED">CLOSED</option>
-                    </Field>
-                    <FormErrorMessage>{errors.status}</FormErrorMessage>
-                  </FormControl>
+                  <SimpleGrid columns={{ base: 1, md: 2 }} spacing={4}>
+                    <FormControl>
+                      <FormLabel>Assign to</FormLabel>
+                      <Field as={Select} name="assigned_to">
+                        <option value="">Unassigned</option>
+                        {resolvers.map(r => (
+                          <option key={r.id} value={r.id}>{r.name} ({r.email})</option>
+                        ))}
+                      </Field>
+                    </FormControl>
+                    <FormControl isInvalid={touched.priority && errors.priority}>
+                      <FormLabel>Priority</FormLabel>
+                      <Field as={Select} name="priority">
+                        <option value="LOW">LOW</option>
+                        <option value="MEDIUM">MEDIUM</option>
+                        <option value="HIGH">HIGH</option>
+                        <option value="CRITICAL">CRITICAL</option>
+                      </Field>
+                      <FormErrorMessage>{errors.priority}</FormErrorMessage>
+                    </FormControl>
+                    <FormControl>
+                      <FormLabel>Deadline</FormLabel>
+                      <Field as={Input} type="date" name="deadline" />
+                    </FormControl>
+                    <FormControl isInvalid={touched.status && errors.status}>
+                      <FormLabel>Status</FormLabel>
+                      <Field as={Select} name="status">
+                        <option value="OPEN">OPEN</option>
+                        <option value="IN_PROGRESS">IN_PROGRESS</option>
+                        <option value="RESOLVED">RESOLVED</option>
+                        <option value="CLOSED">CLOSED</option>
+                      </Field>
+                      <FormErrorMessage>{errors.status}</FormErrorMessage>
+                    </FormControl>
+                  </SimpleGrid>
                   {status && <Box color="red.500">{status}</Box>}
-                  <Button colorScheme="teal" type="submit" isLoading={isSubmitting}>Save</Button>
+                  <Button colorScheme="teal" type="submit" isLoading={isSubmitting} alignSelf="flex-start">Save</Button>
                 </Stack>
               </Form>
             )}
